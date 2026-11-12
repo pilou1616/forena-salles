@@ -133,7 +133,7 @@
       try {
         const r = await fetch('/api/bilans', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ pin: essai, action: 'login' }) });
         if (r.ok) {
-          pin = essai; try { sessionStorage.setItem('forena-ads-pin', essai); } catch (e) {} fermer();
+          pin = essai; try { sessionStorage.setItem('forena-ads-pin', essai); } catch (e) {} fermer(); versAccueil();
           const auj = aujourdHui(), D = window.FORENA && window.FORENA.data;
           if (D && dernier.date !== auj && D.jours.some(j => j.date === auj)) { location.hash = auj; return; }
           await charger(dernier.date); peindre();
@@ -146,7 +146,8 @@
     champ.onkeydown = e => { if (e.key === 'Enter') valider(); };
   }
 
-  $('btn-ads').onclick = () => { if (pin) { $('ads').scrollIntoView({ behavior: 'smooth' }); } else ouvrirDialogue(); };
+  const versAccueil = () => { const o = document.querySelector('#onglets button[data-o="moi"]'); if (o && getComputedStyle(document.getElementById('onglets')).display !== 'none') o.click(); };
+  $('btn-ads').onclick = () => { if (pin) { versAccueil(); $('ads').scrollIntoView({ behavior: 'smooth' }); } else ouvrirDialogue(); };
 
   window.addEventListener('forena:rendu', async e => {
     dernier = e.detail;

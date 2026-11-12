@@ -59,8 +59,62 @@ td.moi{background:var(--moi)!important;color:#222!important;font-weight:700}
 .legende{display:flex;flex-wrap:wrap;gap:12px;font-size:.75rem;color:var(--sub);margin-top:8px}
 .legende i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px}
 .pied{color:var(--sub);font-size:.75rem;text-align:center;margin-top:18px}
+/* ma journée : ligne du temps */
+.ligne-temps{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.ligne-temps li{display:flex;align-items:center;gap:12px;padding:8px 12px;border-radius:10px;background:var(--vide)}
+.ligne-temps .t{font-weight:700;min-width:3.4em;color:var(--sub)}
+.ligne-temps .s{font-weight:700;font-size:1.05rem}
+.ligne-temps li.pause{background:transparent;border:1px dashed var(--gris);color:var(--sub);font-style:italic}
+.ligne-temps li.maint{outline:2px solid var(--moi)}
+.choisir{color:var(--sub)}
+/* par heure (mobile) */
+.puces{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}
+.puces button{flex:0 0 auto;border-radius:999px;padding:7px 12px;font-size:.9rem}
+.puces button.on{background:var(--marine);color:#fff;border-color:var(--marine)}
+.puces button.mienne:not(.on){border-color:var(--moi);box-shadow:inset 0 0 0 1px var(--moi)}
+.liste-h{display:flex;flex-direction:column;gap:6px}
+.liste-h div{display:flex;gap:12px;align-items:center;padding:9px 12px;border-radius:10px;background:var(--vide)}
+.liste-h b{min-width:4.6em}
+.liste-h .esthe{background:var(--esthe);color:#273045}.liste-h .recours{background:var(--recours);color:#222}
+.liste-h .duo{background:var(--duo);color:#273045}.liste-h .test{background:var(--test);color:#fff}
+.liste-h .moi{background:var(--moi)!important;color:#222!important;font-weight:700}
+.liste-h .vide{color:var(--sub);font-style:italic}
+.seulement-mobile{display:none}
+/* fiche d'une salle */
+.fiche{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:flex-end;z-index:20}
+.fiche>div{background:var(--carte);color:var(--txt);width:100%;border-radius:16px 16px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));max-height:70vh;overflow:auto}
+.fiche h3{margin:0 0 10px;font-family:"PT Serif",serif;font-size:1.3rem}
+.fiche .l{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--vide)}
+.fiche .l.moi{font-weight:700;color:#8a6a00}
+.fiche button{width:100%;margin-top:12px}
+/* onglets (mobile) */
+.onglets{display:none}
+@media (max-width:700px){
+  header{padding:10px 16px 8px}header .sous{font-size:.65rem}
+  .barre{position:sticky;top:0;z-index:5;background:var(--bg);padding:8px 16px 8px;gap:6px;box-shadow:0 1px 0 var(--gris)}
+  .barre label{font-size:0;gap:0}
+  main{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+  .carte{padding:12px}
+  .onglets{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--carte);border-top:1px solid var(--gris);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+  .onglets button{flex:1;border:0;background:transparent;font-size:.8rem;color:var(--sub);display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0}
+  .onglets button span{font-size:1.25rem;line-height:1}
+  .onglets button.on{color:var(--marine);font-weight:700}
+  @media (prefers-color-scheme:dark){.onglets button.on{color:#fff}}
+  body[data-onglet] main>[data-onglet]{display:none}
+  body[data-onglet="moi"] main>[data-onglet="moi"]:not([hidden]),body[data-onglet="plan"] main>[data-onglet="plan"],body[data-onglet="heure"] main>[data-onglet="heure"]{display:block}
+  .seulement-mobile{display:block}.seulement-bureau{display:none}
+  .plan{min-width:0;gap:2px}
+  .salle{padding:3px;font-size:.6rem;cursor:pointer}
+  .salle .num{font-size:.85rem}
+  .salle .seg{display:none}.salle .seg.libre{display:block}
+  .salle .qui{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.85}
+  .ads,.zone{font-size:.55rem}.ads small{display:none}
+  .legende{gap:8px;font-size:.7rem}
+  .moi-res .gros{font-size:1.9rem}
+}
+@media (min-width:701px){.salle .qui{display:none}}
 .ferme{font-size:1.1rem;padding:30px;text-align:center;color:var(--sub)}
-@media (max-width:640px){#nom{min-width:0;width:100%}.barre label{flex:1 1 100%;min-width:0;width:100%}.barre label span{width:100%}#jour{flex:1;min-width:0}}
+@media (max-width:700px){#nom{min-width:0;width:100%}.barre label{flex:1 1 100%;min-width:0;width:100%}.barre label span{width:100%}#jour{flex:1;min-width:0}}
 </style>
 </head>
 <body>
@@ -72,14 +126,20 @@ td.moi{background:var(--moi)!important;color:#222!important;font-weight:700}
   <label class="n">Mon nom<select id="nom"><option value="">— Choisir mon nom —</option></select></label>
 </div>
 <main>
-  <section class="carte" id="moi" hidden></section>
-  <section class="carte" id="ads" hidden></section>
-  <section class="carte"><h2>Plan de la journée</h2><div class="plan-wrap"><div class="plan" id="plan"></div></div>
+  <section class="carte" id="moi" data-onglet="moi" hidden></section>
+  <section class="carte" id="ads" data-onglet="moi" hidden></section>
+  <section class="carte seulement-mobile choisir" id="choisir" data-onglet="moi" hidden>Choisis ton nom en haut pour voir ta journée.</section>
+  <section class="carte" data-onglet="plan"><h2>Plan de la journée</h2><div class="plan-wrap"><div class="plan" id="plan"></div></div>
     <div class="legende"><span><i style="background:var(--masso)"></i>Massothérapie</span><span><i style="background:var(--duo)"></i>Duo (13, 15)</span><span><i style="background:var(--esthe)"></i>Esthétique (5, 9)</span><span><i style="background:var(--recours)"></i>Masso en dernier recours</span><span><i style="background:var(--moi)"></i>Ma salle</span><span><i style="background:#A9C4B6"></i>ADS · accueil des soins</span></div>
   </section>
-  <section class="carte"><h2>Heure par heure</h2><div class="grille-wrap" id="grille"></div></section>
+  <section class="carte" data-onglet="heure"><h2>Heure par heure</h2><div class="seulement-mobile" id="parheure"></div><div class="grille-wrap seulement-bureau" id="grille"></div></section>
   <div class="pied" id="pied"></div>
 </main>
+<nav class="onglets" id="onglets">
+  <button type="button" data-o="moi"><span>◉</span>Ma journée</button>
+  <button type="button" data-o="plan"><span>▦</span>Plan</button>
+  <button type="button" data-o="heure"><span>◷</span>Par heure</button>
+</nav>
 <script src="moteur.js"></script>
 <script src="ads.js" defer></script>
 <script>
@@ -111,11 +171,48 @@ td.moi{background:var(--moi)!important;color:#222!important;font-weight:700}
   const ZONES = [[8,1,3,28,'Corridor'],[11,1,4,10,'Toilettes'],[2,29,23,3,''],[11,11,14,2,''],[17,13,2,16,'']];
   const court = n => { const p = n.split(' '); return p.length > 1 ? `${p[0]} ${p[1][0]}.` : n; };
 
+  const minutes = lab => { const [hh, mm] = lab.split('h').map(Number); return hh * 60 + (mm || 0); };
+  function plageCourante(i) {
+    if (data.jours[i].date !== isoAuj) return -1;
+    const n = new Date(), m = n.getHours() * 60 + n.getMinutes();
+    let k = -1; data.plages.forEach((lab, j) => { if (m >= minutes(lab) - 10) k = j; }); return k;
+  }
+  function fiche(num, segs, nom) {
+    const plages = data.plages;
+    const d = document.createElement('div'); d.className = 'fiche';
+    d.innerHTML = `<div><h3>Salle ${num}${(num===13||num===15)?' · Duo':(num===5||num===9)?' · Esthé':''}</h3>` +
+      (segs.length ? segs.map(s => `<div class="l${nom && s.nom === nom ? ' moi' : ''}"><span>${s.type === 'test' ? s.nom : s.nom}</span><span>${plages[s.deb]}–${s.fin < 10 ? plages[s.fin] : '21h30'}</span></div>`).join('')
+                   : '<div class="l"><span class="libre">Libre toute la journée</span></div>') +
+      `<button type="button">Fermer</button></div>`;
+    d.onclick = e => { if (e.target === d || e.target.tagName === 'BUTTON') d.remove(); };
+    document.body.appendChild(d);
+  }
+  let plageChoisie = null;
+  function parHeure(r, i, nom) {
+    const plages = data.plages, ALL = Moteur.ALL, box = $('parheure');
+    if (r.ferme) { box.innerHTML = '<div class="ferme">Le spa est fermé cette journée.</div>'; return; }
+    const pc = plageCourante(i);
+    const mesP = new Set(); r.grille.forEach((ligne, p) => ligne.forEach(c => { if (c && nom && c.nom === nom) mesP.add(p); }));
+    if (plageChoisie === null || plageChoisie > 9) plageChoisie = pc >= 0 ? pc : (mesP.size ? Math.min(...mesP) : 0);
+    const p = plageChoisie;
+    let h = '<div class="puces">' + plages.map((lab, k) => `<button type="button" data-k="${k}" class="${k === p ? 'on' : ''}${mesP.has(k) ? ' mienne' : ''}">${lab}</button>`).join('') + '</div><div class="liste-h">';
+    ALL.forEach((num, j) => {
+      const c = r.grille[p][j]; const genre = (num===13||num===15) ? 'duo' : (num===5||num===9) ? 'esthe' : '';
+      if (!c) { h += `<div class="${genre}"><b>Salle ${num}</b><span class="vide">libre</span></div>`; return; }
+      const cl = nom && c.nom === nom ? 'moi' : (c.type === 'recours' ? 'recours' : c.type === 'test' ? 'test' : genre);
+      h += `<div class="${cl}"><b>Salle ${num}</b><span>${c.nom}</span></div>`;
+    });
+    box.innerHTML = h + '</div>';
+    box.querySelectorAll('.puces button').forEach(b => b.onclick = () => { plageChoisie = Number(b.dataset.k); parHeure(r, i, nom); });
+    const on = box.querySelector('.puces .on'); if (on) on.scrollIntoView({ block: 'nearest', inline: 'center' });
+  }
+  let dernierJour = null;
   function rendre() {
     const i = Number(selJ.value), nom = selN.value;
     try { localStorage.setItem('forena-nom', nom); } catch (e) {}
     history.replaceState(null, '', '#' + data.jours[i].date);
     const r = Moteur.calculerJour(data, i);
+    if (dernierJour !== i) { plageChoisie = null; dernierJour = i; }
     const plages = data.plages, ALL = Moteur.ALL;
     // ---- mon horaire
     const moi = $('moi');
@@ -126,11 +223,19 @@ td.moi{background:var(--moi)!important;color:#222!important;font-weight:700}
       else if (!p) moi.innerHTML = `<h2>${nom}</h2><div>Pas de soins prévus pour toi cette journée.</div>`;
       else {
         const salles = p.salles.length ? p.salles.join(' → ') : '—';
+        const pc = plageCourante(i);
+        let lt = '<ul class="ligne-temps">';
+        p.plagesSalle.forEach((v, k) => {
+          if (p.pause === plages[k]) lt += `<li class="pause"><span class="t">${plages[k]}</span>Pause</li>`;
+          else if (v !== null) lt += `<li${k === pc ? ' class="maint"' : ''}><span class="t">${plages[k]}</span><span class="s">${v === 'sans' ? 'Sans salle' : 'Salle ' + v}</span></li>`;
+        });
+        lt += `</ul>`;
         moi.innerHTML = `<h2>${nom}</h2><div class="moi-res"><span class="gros">Salle ${salles}</span>
           <span>${p.debut} – ${p.fin}${p.pause ? ` · pause à ${p.pause}` : ''}</span>
-          ${p.sans ? `<span class="alerte">${p.sans} plage(s) sans salle : voir ta superviseure</span>` : ''}</div>`;
+          ${p.sans ? `<span class="alerte">${p.sans} plage(s) sans salle : voir ta superviseure</span>` : ''}</div>${lt}`;
       }
     } else moi.hidden = true;
+    $('choisir').hidden = !!nom;
     // ---- plan
     const plan = $('plan'); plan.innerHTML = ''; let cible = null;
     ZONES.forEach(([x,y,w,hh,t]) => { const z = document.createElement('div'); z.className = 'zone'; z.style.gridColumn = `${x} / span ${w}`; z.style.gridRow = `${y} / span ${hh}`; z.textContent = t; plan.appendChild(z); });
@@ -149,6 +254,8 @@ td.moi{background:var(--moi)!important;color:#222!important;font-weight:700}
         segs.push({nom:c.nom, type:c.type, deb:p, fin:p+1});
       }
       if (!segs.length) html += `<span class="seg libre">libre</span>`;
+      else html += `<span class="qui">${[...new Set(segs.map(s => s.nom.split(' ')[0]))].join(', ')}</span>`;
+      el.onclick = () => fiche(num, segs, nom);
       let mienne = false;
       segs.forEach(s => {
         const finL = s.fin < 10 ? plages[s.fin] : '21h30';
@@ -168,6 +275,7 @@ td.moi{background:var(--moi)!important;color:#222!important;font-weight:700}
         return `<td class="${c.type}${nom && c.nom===nom ? ' moi':''}" data-p="${p+1}" data-nom="${c.nom.replace(/"/g,'')}">${court(c.nom)}</td>`; }).join('') + '</tr>';
     }
     $('grille').innerHTML = t + '</tbody></table>';
+    parHeure(r, i, nom);
     $('pied').textContent = `Mis à jour : ${data.genere.replace('T',' à ')} · même calcul que l'onglet Salles du classeur de couverture.`;
     window.dispatchEvent(new CustomEvent('forena:rendu', { detail: { r, i, nom, date: data.jours[i].date, plages } }));
   }
@@ -176,6 +284,23 @@ td.moi{background:var(--moi)!important;color:#222!important;font-weight:700}
   $('prec').onclick = () => { if (selJ.selectedIndex > 0) { selJ.selectedIndex--; rendre(); } };
   $('suiv').onclick = () => { if (selJ.selectedIndex < selJ.options.length-1) { selJ.selectedIndex++; rendre(); } };
   window.addEventListener('hashchange', () => { const k = data.jours.findIndex(j => j.date === location.hash.slice(1)); if (k >= 0 && k !== Number(selJ.value)) { selJ.value = k; rendre(); } });
+  let onglet = null; try { onglet = localStorage.getItem('forena-onglet'); } catch (e) {}
+  if (!['moi','plan','heure'].includes(onglet)) onglet = selN.value ? 'moi' : 'plan';
+  function choisirOnglet(o) {
+    onglet = o; document.body.dataset.onglet = o;
+    document.querySelectorAll('#onglets button').forEach(b => b.classList.toggle('on', b.dataset.o === o));
+    try { localStorage.setItem('forena-onglet', o); } catch (e) {}
+    window.scrollTo(0, 0);
+  }
+  document.querySelectorAll('#onglets button').forEach(b => b.onclick = () => choisirOnglet(b.dataset.o));
+  selN.addEventListener('change', () => { if (selN.value) choisirOnglet('moi'); });
+  choisirOnglet(onglet);
+  let x0 = null, y0 = null;
+  document.querySelector('main').addEventListener('touchstart', e => { if (e.target.closest('.puces,.plan-wrap,.grille-wrap')) { x0 = null; return; } x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
+  document.querySelector('main').addEventListener('touchend', e => {
+    if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0; x0 = null;
+    if (Math.abs(dx) > 70 && Math.abs(dx) > 2 * Math.abs(dy)) (dx < 0 ? $('suiv') : $('prec')).click();
+  }, { passive: true });
   rendre();
   // recharge les données toutes les 10 minutes si la page reste ouverte
   setInterval(async () => { try { const d2 = await (await fetch('data/plan.json', {cache:'no-store'})).json(); if (d2.genere !== data.genere) { data = d2; rendre(); } } catch (e) {} }, 600000);
