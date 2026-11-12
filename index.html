@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan des salles — Förena</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--marine:#273045;--accent:#d0a593;--ivoire:#F7F4EF;--gris:#C9CED8;--txt:#1f2330;--sub:#6b7080;--bg:#F7F4EF;--carte:#fff;
+  --masso:#273045;--masso-t:#fff;--duo:#d0a593;--esthe:#EADDC3;--recours:#F2B880;--test:#9aa3b8;--vide:#eef0f3;--moi:#e8b923}
+@media (prefers-color-scheme:dark){:root{--txt:#e9e9ee;--sub:#a3a8b5;--bg:#14161c;--carte:#1c1f27;--vide:#262a33;--gris:#3a3f4c;--ivoire:#1c1f27}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.45 Inter,system-ui,sans-serif}
+header{background:var(--marine);color:#fff;padding:14px 16px 12px}
+header .marque{font-family:"PT Serif",serif;font-weight:700;letter-spacing:.32em;font-size:1.15rem}
+header .sous{color:var(--accent);font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;margin-top:2px}
+.barre{display:flex;flex-wrap:wrap;gap:10px;align-items:end;padding:14px 16px;max-width:1200px;margin:0 auto}
+.barre label{display:flex;flex-direction:column;font-size:.75rem;color:var(--sub);gap:4px;text-transform:uppercase;letter-spacing:.06em}
+select,button{font:inherit;font-size:1rem;padding:9px 10px;border-radius:8px;border:1px solid var(--gris);background:var(--carte);color:var(--txt);min-width:0}
+#nom{min-width:240px}
+button.nav{width:44px;padding:9px 0}
+main{max-width:1200px;margin:0 auto;padding:0 16px 40px}
+.carte{background:var(--carte);border-radius:12px;padding:14px;margin:0 0 14px;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+h2{font-family:"PT Serif",serif;color:var(--marine);margin:0 0 8px;font-size:1.15rem}
+@media (prefers-color-scheme:dark){h2{color:#c9d3ec}}
+.moi-res{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.moi-res .gros{font-size:2.2rem;font-weight:700;color:var(--marine);font-family:"PT Serif",serif}
+@media (prefers-color-scheme:dark){.moi-res .gros{color:#fff}}
+.pastille{display:inline-block;background:var(--moi);color:#222;border-radius:999px;padding:3px 10px;font-weight:600;font-size:.85rem}
+.alerte{color:#b3261e;font-weight:600}
+/* plan */
+.plan{display:grid;grid-template-columns:repeat(24,1fr);grid-auto-rows:minmax(16px,auto);gap:3px;min-width:640px}
+.plan-wrap{overflow-x:auto}
+.salle{border-radius:6px;padding:4px 5px;font-size:.72rem;line-height:1.25;overflow:hidden;position:relative;background:var(--masso);color:var(--masso-t)}
+.salle .num{font-weight:700;font-size:.95rem;display:block}
+.salle.duo{background:var(--duo);color:#273045}.salle.esthe{background:var(--esthe);color:#273045}
+.salle .seg{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.95}
+.salle .seg.r{background:var(--recours);color:#222;border-radius:3px;padding:0 3px;margin-top:1px}
+.salle.moi{outline:4px solid var(--moi);outline-offset:1px;box-shadow:0 0 0 7px rgba(232,185,35,.25)}
+.salle .seg.moi{background:var(--moi);color:#222;border-radius:3px;padding:0 3px;font-weight:700}
+.zone{border-radius:6px;background:var(--vide);color:var(--sub);font-size:.7rem;display:flex;align-items:center;justify-content:center;font-style:italic}
+.libre{opacity:.55;font-style:italic}
+/* grille */
+table{border-collapse:separate;border-spacing:2px;width:100%;min-width:900px;font-size:.72rem;table-layout:fixed}
+td.h,th:first-child{width:52px}
+th{background:var(--marine);color:#fff;padding:5px 3px;border-radius:4px;font-weight:600}
+th.duo{background:var(--duo);color:#273045}th.esthe{background:var(--esthe);color:#273045}
+td{background:var(--vide);border-radius:4px;padding:4px 3px;text-align:center;height:34px;vertical-align:middle;word-break:break-word}
+td.h{background:transparent;font-weight:700;color:var(--sub);text-align:right;padding-right:6px;white-space:nowrap}
+td.masso{background:#dfe5f2;color:#1f2a44}td.esthe{background:var(--esthe);color:#273045}td.recours{background:var(--recours);color:#222}
+td.test{background:var(--test);color:#fff}td.ajustement{background:#efe2f5;color:#4b2a5e}
+@media (prefers-color-scheme:dark){td.masso{background:#2c3550;color:#e6ebf7}}
+td.moi{background:var(--moi)!important;color:#222!important;font-weight:700}
+.grille-wrap{overflow-x:auto}
+.legende{display:flex;flex-wrap:wrap;gap:12px;font-size:.75rem;color:var(--sub);margin-top:8px}
+.legende i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px}
+.pied{color:var(--sub);font-size:.75rem;text-align:center;margin-top:18px}
+.ferme{font-size:1.1rem;padding:30px;text-align:center;color:var(--sub)}
+@media (max-width:640px){#nom{min-width:0;width:100%}.barre label{flex:1 1 100%;min-width:0;width:100%}.barre label span{width:100%}#jour{flex:1;min-width:0}}
+</style>
+</head>
+<body>
+<header><div class="marque">FÖRENA</div><div class="sous">Plan des salles · soins</div></header>
+<div class="barre">
+  <label>Journée
+    <span style="display:flex;gap:6px"><button class="nav" id="prec" aria-label="Jour précédent">‹</button><select id="jour"></select><button class="nav" id="suiv" aria-label="Jour suivant">›</button></span>
+  </label>
+  <label class="n">Mon nom<select id="nom"><option value="">— Choisir mon nom —</option></select></label>
+</div>
+<main>
+  <section class="carte" id="moi" hidden></section>
+  <section class="carte"><h2>Plan de la journée</h2><div class="plan-wrap"><div class="plan" id="plan"></div></div>
+    <div class="legende"><span><i style="background:var(--masso)"></i>Massothérapie</span><span><i style="background:var(--duo)"></i>Duo (13, 15)</span><span><i style="background:var(--esthe)"></i>Esthétique (5, 9)</span><span><i style="background:var(--recours)"></i>Masso en dernier recours</span><span><i style="background:var(--moi)"></i>Ma salle</span></div>
+  </section>
+  <section class="carte"><h2>Heure par heure</h2><div class="grille-wrap" id="grille"></div></section>
+  <div class="pied" id="pied"></div>
+</main>
+<script src="moteur.js"></script>
+<script>
+(async function () {
+  const MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  const JOURS = {Lun:'lundi',Mar:'mardi',Mer:'mercredi',Jeu:'jeudi',Ven:'vendredi',Sam:'samedi',Dim:'dimanche'};
+  const $ = id => document.getElementById(id);
+  let data;
+  try { data = await (await fetch('data/plan.json', {cache:'no-store'})).json(); }
+  catch (e) { $('plan').textContent = 'Données indisponibles pour le moment.'; return; }
+  const selJ = $('jour'), selN = $('nom');
+  const libJour = j => { const [y,m,d] = j.date.split('-').map(Number); return `${JOURS[j.jour]||j.jour} ${d} ${MOIS[m-1]}` + (j.ferme ? ' (fermé)' : ''); };
+  data.jours.forEach((j, i) => { const o = document.createElement('option'); o.value = i; o.textContent = libJour(j); selJ.appendChild(o); });
+  const noms = [...new Set(data.reponses.filter(Boolean).map(r => r.nom))].sort((a,b)=>a.localeCompare(b,'fr'));
+  noms.forEach(n => { const o = document.createElement('option'); o.value = n; o.textContent = n; selN.appendChild(o); });
+  // jour par défaut : aujourd'hui si dans le mois, sinon le 1er
+  const auj = new Date(); const isoAuj = `${auj.getFullYear()}-${String(auj.getMonth()+1).padStart(2,'0')}-${String(auj.getDate()).padStart(2,'0')}`;
+  let iDef = data.jours.findIndex(j => j.date === isoAuj); if (iDef < 0) iDef = 0;
+  try { const n = localStorage.getItem('forena-nom'); if (n && noms.includes(n)) selN.value = n; } catch (e) {}
+  const h = location.hash.replace('#','');
+  const iHash = data.jours.findIndex(j => j.date === h);
+  selJ.value = iHash >= 0 ? iHash : iDef;
+
+  // positions du plan (grille 24 colonnes) — même disposition que le plan Excel
+  const POS = {18:[2,1,6,5],17:[2,6,6,5],15:[2,11,6,7],13:[2,18,6,6],11:[2,24,6,5],
+    16:[11,13,6,5],14:[11,18,6,4],12:[11,22,6,4],10:[11,26,6,3],
+    1:[19,13,6,5],2:[19,18,6,4],3:[19,22,6,4],4:[19,26,6,3],
+    9:[2,32,3,6],8:[5,32,5,6],7:[10,32,5,6],6:[15,32,6,6],5:[21,32,4,6]};
+  const ZONES = [[8,1,3,28,'Corridor'],[11,1,8,10,'Toilettes'],[2,29,23,3,''],[11,11,14,2,''],[17,13,2,16,'']];
+  const court = n => { const p = n.split(' '); return p.length > 1 ? `${p[0]} ${p[1][0]}.` : n; };
+
+  function rendre() {
+    const i = Number(selJ.value), nom = selN.value;
+    try { localStorage.setItem('forena-nom', nom); } catch (e) {}
+    history.replaceState(null, '', '#' + data.jours[i].date);
+    const r = Moteur.calculerJour(data, i);
+    const plages = data.plages, ALL = Moteur.ALL;
+    // ---- mon horaire
+    const moi = $('moi');
+    if (nom) {
+      const p = r.personnes.concat(r.esthe).find(x => x.nom === nom);
+      moi.hidden = false;
+      if (r.ferme) moi.innerHTML = `<h2>${nom}</h2><div>Le spa est fermé cette journée.</div>`;
+      else if (!p) moi.innerHTML = `<h2>${nom}</h2><div>Pas de soins prévus pour toi cette journée.</div>`;
+      else {
+        const salles = p.salles.length ? p.salles.join(' → ') : '—';
+        moi.innerHTML = `<h2>${nom}</h2><div class="moi-res"><span class="gros">Salle ${salles}</span>
+          <span>${p.debut} – ${p.fin}${p.pause ? ` · pause à ${p.pause}` : ''}</span>
+          ${p.sans ? `<span class="alerte">${p.sans} plage(s) sans salle : voir ta superviseure</span>` : ''}</div>`;
+      }
+    } else moi.hidden = true;
+    // ---- plan
+    const plan = $('plan'); plan.innerHTML = ''; let cible = null;
+    ZONES.forEach(([x,y,w,hh,t]) => { const z = document.createElement('div'); z.className = 'zone'; z.style.gridColumn = `${x} / span ${w}`; z.style.gridRow = `${y} / span ${hh}`; z.textContent = t; plan.appendChild(z); });
+    ALL.forEach((num, j) => {
+      const [x,y,w,hh] = POS[num];
+      const el = document.createElement('div');
+      el.className = 'salle' + ((num===13||num===15) ? ' duo' : (num===5||num===9) ? ' esthe' : '');
+      el.style.gridColumn = `${x} / span ${w}`; el.style.gridRow = `${y} / span ${hh}`;
+      let html = `<span class="num">${num}${(num===13||num===15)?' · Duo':(num===5||num===9)?' · Esthé':''}</span>`;
+      const segs = [];
+      for (let p = 0; p < 10; p++) {
+        const c = r.grille[p][j]; if (!c) continue;
+        const prev = segs[segs.length-1];
+        if (prev && prev.nom === c.nom && prev.fin === p) { prev.fin = p+1; continue; }
+        segs.push({nom:c.nom, type:c.type, deb:p, fin:p+1});
+      }
+      if (!segs.length) html += `<span class="seg libre">libre</span>`;
+      let mienne = false;
+      segs.forEach(s => {
+        const finL = s.fin < 10 ? plages[s.fin] : '21h30';
+        const m = nom && s.nom === nom; if (m) mienne = true;
+        html += `<span class="seg${s.type==='recours'?' r':''}${m?' moi':''}" title="${s.nom}">${court(s.nom)} · ${plages[s.deb]}–${finL}</span>`;
+      });
+      if (mienne) el.classList.add('moi');
+      el.innerHTML = html; plan.appendChild(el);
+      if (mienne) cible = el;
+    });
+    if (cible) { const w = plan.parentElement; requestAnimationFrame(() => { w.scrollLeft = Math.max(0, cible.offsetLeft - w.clientWidth / 2 + cible.offsetWidth / 2); }); }
+    if (r.ferme) { plan.innerHTML = '<div class="ferme" style="grid-column:1/-1">Le spa est fermé cette journée.</div>'; }
+    // ---- grille
+    let t = '<table><thead><tr><th></th>' + ALL.map(n => `<th class="${(n===13||n===15)?'duo':(n===5||n===9)?'esthe':''}">${n}</th>`).join('') + '</tr></thead><tbody>';
+    for (let p = 0; p < 10; p++) {
+      t += `<tr><td class="h">${plages[p]}</td>` + ALL.map((n, j) => { const c = r.grille[p][j]; if (!c) return '<td></td>';
+        return `<td class="${c.type}${nom && c.nom===nom ? ' moi':''}">${court(c.nom)}</td>`; }).join('') + '</tr>';
+    }
+    $('grille').innerHTML = t + '</tbody></table>';
+    $('pied').textContent = `Mis à jour : ${data.genere.replace('T',' à ')} · même calcul que l'onglet Salles du classeur de couverture.`;
+  }
+  selJ.onchange = selN.onchange = rendre;
+  $('prec').onclick = () => { if (selJ.selectedIndex > 0) { selJ.selectedIndex--; rendre(); } };
+  $('suiv').onclick = () => { if (selJ.selectedIndex < selJ.options.length-1) { selJ.selectedIndex++; rendre(); } };
+  window.addEventListener('hashchange', () => { const k = data.jours.findIndex(j => j.date === location.hash.slice(1)); if (k >= 0 && k !== Number(selJ.value)) { selJ.value = k; rendre(); } });
+  rendre();
+  // recharge les données toutes les 10 minutes si la page reste ouverte
+  setInterval(async () => { try { const d2 = await (await fetch('data/plan.json', {cache:'no-store'})).json(); if (d2.genere !== data.genere) { data = d2; rendre(); } } catch (e) {} }, 600000);
+})();
+</script>
+</body>
+</html>

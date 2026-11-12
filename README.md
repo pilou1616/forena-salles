@@ -1,2 +1,19 @@
-# forena-salles
-Salle Soins
+# Plan des salles — Förena
+
+Page publique (Cloudflare Pages) qui montre le plan des salles de soins pour chaque journée du mois.
+Chaque thérapeute choisit la journée et son nom : sa salle et ses heures sont mises en évidence.
+
+## Fichiers
+| Fichier | Rôle |
+|---|---|
+| `index.html` | La page (aucune installation, aucun build). |
+| `moteur.js` | Calcul des salles : reproduit l'onglet « Salles » du classeur de couverture (continuité, salle préférée, pause, tests, salles duo et esthé en dernier recours). |
+| `data/plan.json` | Données du mois : réponses du Form, équipe (groupe, pause, salle préférée), ajustements, tests. Aucune donnée financière. |
+| `tools/extraire_donnees.py` | Produit `data/plan.json` à partir du classeur de couverture. |
+
+## Mise à jour
+`data/plan.json` est régénéré à partir du classeur de couverture (SharePoint) puis poussé ici ; Cloudflare republie la page en moins d'une minute.
+La page ouverte se recharge seule toutes les 10 minutes.
+
+## Lien direct vers une journée
+`https://forena-salles.pages.dev/#2026-12-26`
