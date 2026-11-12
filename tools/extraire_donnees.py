@@ -55,8 +55,14 @@ AJ = wb['Ajustements salles']
 ajustements = []
 for r in range(5, 305):
     d = iso(AJ.cell(r, 1).value)
-    if d and AJ.cell(r, 3).value:
+    if d and AJ.cell(r, 3).value and str(AJ.cell(r, 4).value or '').strip():
         ajustements.append({'date': d, 'plage': str(AJ.cell(r, 2).value or ''), 'salle': int(AJ.cell(r, 3).value), 'nom': str(AJ.cell(r, 4).value or '')})
+
+pauses = []
+for r in range(5, 105):
+    d = iso(AJ.cell(r, 7).value); n = AJ.cell(r, 8).value; v = AJ.cell(r, 9).value
+    if d and n and isinstance(v, (int, float)):
+        pauses.append({'date': d, 'nom': str(n), 'pause': int(v)})
 
 T = wb['Tests et entrevues']
 tests = []
@@ -68,6 +74,6 @@ for r in range(6, 106):
 
 out = {'genere': dt.datetime.now().isoformat(timespec='minutes'), 'mois': jours[0]['date'][:7] if jours else '',
        'plages': plages, 'fins': fins, 'dernierePlage': derniere, 'jours': jours, 'blocs': blocs,
-       'equipe': equipe, 'reponses': reponses, 'ajustements': ajustements, 'tests': tests}
+       'equipe': equipe, 'reponses': reponses, 'ajustements': ajustements, 'pauses': pauses, 'tests': tests}
 json.dump(out, open(dst, 'w'), ensure_ascii=False, indent=0)
 print('ok', len([x for x in reponses if x]), 'réponses,', len(jours), 'jours')

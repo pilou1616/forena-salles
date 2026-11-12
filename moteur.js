@@ -11,6 +11,8 @@
 
   // Calcul : début, nombre de soins faisables, durée (avec pause), plage de pause
   function preparer(data, d, esthe) {
+    const date = data.jours[d].date;
+    const exc = (data.pauses || []).filter(x => x.date === date);
     const out = [];
     const last = data.dernierePlage;
     data.reponses.forEach((rep, k) => {
@@ -20,7 +22,8 @@
       if (isE !== esthe || !rep.inclure) return;
       const { s, n } = blocInfo(data, rep.jours[d] || '');
       if (!s) return;
-      const a = last - s + 1, c = eq.pause || 0;
+      const ex = exc.filter(x => x.nom.toLowerCase() === rep.nom.toLowerCase());
+      const a = last - s + 1, c = ex.length ? ex.reduce((t, x) => t + (Number(x.pause) || 0), 0) : (eq.pause || 0);
       let n0 = (c >= 1 && c < n && a > c) ? Math.min(n, a - 1) : Math.min(n, a);
       n0 = Math.max(0, n0);
       if (!n0) return;
@@ -34,13 +37,13 @@
   }
 
   // Moteur générique (même logique que « Calcul salles »)
-  function attribuer(P, rooms, lrRooms, blk) {
+  function attribuer(P, rooms, lrRooms, blk, pinF, pinI) {
     const NR = rooms.length, NA = NR + lrRooms.length;
     const room = P.map(() => new Array(NP + 1).fill(0));
     const AM = P.map(p => { const i = rooms.indexOf(p.pref); return i >= 0 ? i + 1 : 0; });
     const reserved = new Array(NR + 1).fill(0);
     AM.forEach(a => { if (a) reserved[a] = 1; });
-    const pres = (i, p) => P[i].K <= p && P[i].L > p && P[i].M !== p;
+    const pres = (i, p) => P[i].K <= p && P[i].L > p && P[i].M !== p && !pinF[i][p];
     for (let p = 1; p <= NP; p++) {
       const CO = new Array(NA + 1).fill(0), HL = new Array(NA + 1).fill(0), HR = new Array(NA + 1).fill(0);
       if (p > 1) P.forEach((x, i) => { if (pres(i, p) && room[i][p - 1] >= 1 && room[i][p - 1] <= NA) CO[room[i][p - 1]]++; });
@@ -83,6 +86,7 @@
       }
       let cum = 0;
       P.forEach((x, i) => {
+        if (pinF[i][p]) { room[i][p] = pinI[i][p]; return; }
         if (!pres(i, p)) { room[i][p] = 0; return; }
         if (cont[i]) { room[i][p] = room[i][p - 1]; return; }
         if (cl[i]) { room[i][p] = EP[i]; return; }
@@ -105,6 +109,18 @@
     return room;
   }
 
+  // Ajustements : la personne inscrite est placée dans cette salle et retirée de l'attribution automatique
+  function epingles(P, ajJ, plages, nums) {
+    const pinF = P.map(() => new Array(NP + 1).fill(false)), pinI = P.map(() => new Array(NP + 1).fill(0));
+    P.forEach((x, i) => {
+      for (let p = 1; p <= NP; p++) {
+        const a = ajJ.find(a => a.plage === plages[p - 1] && a.nom.toLowerCase() === x.nom.toLowerCase());
+        if (a) { pinF[i][p] = true; pinI[i][p] = nums.indexOf(a.salle) + 1; }
+      }
+    });
+    return { pinF, pinI };
+  }
+
   function calculerJour(data, d) {
     const jour = data.jours[d];
     const date = jour.date;
@@ -113,26 +129,27 @@
     const plages = data.plages;
     // esthétique
     const PE = preparer(data, d, true);
-    const blkE = Array.from({ length: 3 }, () => new Array(NP + 1).fill(0));
-    const roomE = attribuer(PE, ESTHE, [], blkE);
+    const ajJ = data.ajustements.filter(a => a.date === date && a.nom);
+    const ajp = (p, num) => ajJ.some(a => a.plage === plages[p - 1] && a.salle === num);
+    const blkE = Array.from({ length: 3 }, (_, j) => new Array(NP + 1).fill(0).map((v, p) => (j && p && ajp(p, ESTHE[j - 1])) ? 1 : 0));
+    const pe = epingles(PE, ajJ, plages, ESTHE);
+    const roomE = attribuer(PE, ESTHE, [], blkE, pe.pinF, pe.pinI);
     // massothérapie : salles bloquées
     const blk = Array.from({ length: ALL.length + 1 }, () => new Array(NP + 1).fill(0));
     const testsJ = data.tests.filter(t => t.date === date);
-    const ajJ = data.ajustements.filter(a => a.date === date);
     const actif = a => a.nom && a.nom.toLowerCase() !== 'libre';
     for (let p = 1; p <= NP; p++) {
       ALL.forEach((num, j0) => {
         const j = j0 + 1;
-        let b = testsJ.some(t => t.plage === p && t.salle === num);
+        let b = testsJ.some(t => t.plage === p && t.salle === num) || ajp(p, num);
         if (num === 13 || num === 15) b = b || ajJ.some(a => a.salle === num && actif(a));
-        if (num === 5 || num === 9) {
-          b = PE.some((x, i) => roomE[i][p] === (num === 5 ? 1 : 2)) || ajJ.some(a => a.salle === num && a.plage === plages[p - 1] && actif(a));
-        }
+        if (num === 5 || num === 9) b = PE.some((x, i) => roomE[i][p] === (num === 5 ? 1 : 2)) || ajp(p, num);
         blk[j][p] = b ? 1 : 0;
       });
     }
     const PM = preparer(data, d, false);
-    const roomM = attribuer(PM, ROOMS, LR, blk);
+    const pm = epingles(PM, ajJ, plages, ALL);
+    const roomM = attribuer(PM, ROOMS, LR, blk, pm.pinF, pm.pinI);
     // grille affichée
     const grille = [];
     for (let p = 1; p <= NP; p++) {
