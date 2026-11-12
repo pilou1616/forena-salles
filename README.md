@@ -17,3 +17,9 @@ La page ouverte se recharge seule toutes les 10 minutes.
 
 ## Lien direct vers une journée
 `https://forena-salles.pages.dev/#2026-12-26`
+
+## Mode accueil (ADS) — bilans reçus
+- Bouton « Mode accueil » en haut à droite, protégé par un code (secret Cloudflare `ADS_PIN`).
+- L'accueil touche un soin quand le bilan de santé est reçu ; la masso voit la bannière verte et un ✓ dans la grille (mise à jour aux 20 s).
+- Données : base Cloudflare D1 liée sous le nom `DB` (table créée automatiquement, on ne garde que la veille et le jour même).
+- API : `functions/api/bilans.js` (GET `?date=AAAA-MM-JJ`, POST `{pin, date, nom, plage, recu}`).
