@@ -39,6 +39,8 @@ h2{font-family:"PT Serif",serif;color:var(--marine);margin:0 0 8px;font-size:1.1
 .salle .seg.r{background:var(--recours);color:#222;border-radius:3px;padding:0 3px;margin-top:1px}
 .salle.moi{outline:4px solid var(--moi);outline-offset:1px;box-shadow:0 0 0 7px rgba(232,185,35,.25)}
 .salle .seg.moi{background:var(--moi);color:#222;border-radius:3px;padding:0 3px;font-weight:700}
+.ads{border-radius:6px;background:#A9C4B6;color:#1f3a30;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-weight:700;font-size:.8rem;padding:4px}
+.ads small{font-weight:400;font-size:.68rem}
 .zone{border-radius:6px;background:var(--vide);color:var(--sub);font-size:.7rem;display:flex;align-items:center;justify-content:center;font-style:italic}
 .libre{opacity:.55;font-style:italic}
 /* grille */
@@ -71,7 +73,7 @@ td.moi{background:var(--moi)!important;color:#222!important;font-weight:700}
 <main>
   <section class="carte" id="moi" hidden></section>
   <section class="carte"><h2>Plan de la journée</h2><div class="plan-wrap"><div class="plan" id="plan"></div></div>
-    <div class="legende"><span><i style="background:var(--masso)"></i>Massothérapie</span><span><i style="background:var(--duo)"></i>Duo (13, 15)</span><span><i style="background:var(--esthe)"></i>Esthétique (5, 9)</span><span><i style="background:var(--recours)"></i>Masso en dernier recours</span><span><i style="background:var(--moi)"></i>Ma salle</span></div>
+    <div class="legende"><span><i style="background:var(--masso)"></i>Massothérapie</span><span><i style="background:var(--duo)"></i>Duo (13, 15)</span><span><i style="background:var(--esthe)"></i>Esthétique (5, 9)</span><span><i style="background:var(--recours)"></i>Masso en dernier recours</span><span><i style="background:var(--moi)"></i>Ma salle</span><span><i style="background:#A9C4B6"></i>ADS · accueil des soins</span></div>
   </section>
   <section class="carte"><h2>Heure par heure</h2><div class="grille-wrap" id="grille"></div></section>
   <div class="pied" id="pied"></div>
@@ -103,7 +105,7 @@ td.moi{background:var(--moi)!important;color:#222!important;font-weight:700}
     16:[11,13,6,5],14:[11,18,6,4],12:[11,22,6,4],10:[11,26,6,3],
     1:[19,13,6,5],2:[19,18,6,4],3:[19,22,6,4],4:[19,26,6,3],
     9:[2,32,3,6],8:[5,32,5,6],7:[10,32,5,6],6:[15,32,6,6],5:[21,32,4,6]};
-  const ZONES = [[8,1,3,28,'Corridor'],[11,1,8,10,'Toilettes'],[2,29,23,3,''],[11,11,14,2,''],[17,13,2,16,'']];
+  const ZONES = [[8,1,3,28,'Corridor'],[11,1,4,10,'Toilettes'],[2,29,23,3,''],[11,11,14,2,''],[17,13,2,16,'']];
   const court = n => { const p = n.split(' '); return p.length > 1 ? `${p[0]} ${p[1][0]}.` : n; };
 
   function rendre() {
@@ -129,6 +131,7 @@ td.moi{background:var(--moi)!important;color:#222!important;font-weight:700}
     // ---- plan
     const plan = $('plan'); plan.innerHTML = ''; let cible = null;
     ZONES.forEach(([x,y,w,hh,t]) => { const z = document.createElement('div'); z.className = 'zone'; z.style.gridColumn = `${x} / span ${w}`; z.style.gridRow = `${y} / span ${hh}`; z.textContent = t; plan.appendChild(z); });
+    { const a = document.createElement('div'); a.className = 'ads'; a.style.gridColumn = '15 / span 4'; a.style.gridRow = '1 / span 10'; a.innerHTML = 'ADS<small>Accueil des soins</small>'; plan.appendChild(a); }
     ALL.forEach((num, j) => {
       const [x,y,w,hh] = POS[num];
       const el = document.createElement('div');
