@@ -14,6 +14,7 @@
 body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.45 Inter,system-ui,sans-serif}
 header{background:var(--marine);color:#fff;padding:14px 16px 12px}
 header .marque{font-family:"PT Serif",serif;font-weight:700;letter-spacing:.32em;font-size:1.15rem}
+header{position:relative}.btn-ads{position:absolute;right:12px;top:14px;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:999px;padding:6px 12px;font-size:.8rem}
 header .sous{color:var(--accent);font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;margin-top:2px}
 .barre{display:flex;flex-wrap:wrap;gap:10px;align-items:end;padding:14px 16px;max-width:1200px;margin:0 auto}
 .barre label{display:flex;flex-direction:column;font-size:.75rem;color:var(--sub);gap:4px;text-transform:uppercase;letter-spacing:.06em}
@@ -63,7 +64,7 @@ td.moi{background:var(--moi)!important;color:#222!important;font-weight:700}
 </style>
 </head>
 <body>
-<header><div class="marque">FÖRENA</div><div class="sous">Plan des salles · soins</div></header>
+<header><button id="btn-ads" class="btn-ads" type="button">Mode accueil</button><div class="marque">FÖRENA</div><div class="sous">Plan des salles · soins</div></header>
 <div class="barre">
   <label>Journée
     <span style="display:flex;gap:6px"><button class="nav" id="prec" aria-label="Jour précédent">‹</button><select id="jour"></select><button class="nav" id="suiv" aria-label="Jour suivant">›</button></span>
@@ -72,6 +73,7 @@ td.moi{background:var(--moi)!important;color:#222!important;font-weight:700}
 </div>
 <main>
   <section class="carte" id="moi" hidden></section>
+  <section class="carte" id="ads" hidden></section>
   <section class="carte"><h2>Plan de la journée</h2><div class="plan-wrap"><div class="plan" id="plan"></div></div>
     <div class="legende"><span><i style="background:var(--masso)"></i>Massothérapie</span><span><i style="background:var(--duo)"></i>Duo (13, 15)</span><span><i style="background:var(--esthe)"></i>Esthétique (5, 9)</span><span><i style="background:var(--recours)"></i>Masso en dernier recours</span><span><i style="background:var(--moi)"></i>Ma salle</span><span><i style="background:#A9C4B6"></i>ADS · accueil des soins</span></div>
   </section>
@@ -79,6 +81,7 @@ td.moi{background:var(--moi)!important;color:#222!important;font-weight:700}
   <div class="pied" id="pied"></div>
 </main>
 <script src="moteur.js"></script>
+<script src="ads.js" defer></script>
 <script>
 (async function () {
   const MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
@@ -162,11 +165,13 @@ td.moi{background:var(--moi)!important;color:#222!important;font-weight:700}
     let t = '<table><thead><tr><th></th>' + ALL.map(n => `<th class="${(n===13||n===15)?'duo':(n===5||n===9)?'esthe':''}">${n}</th>`).join('') + '</tr></thead><tbody>';
     for (let p = 0; p < 10; p++) {
       t += `<tr><td class="h">${plages[p]}</td>` + ALL.map((n, j) => { const c = r.grille[p][j]; if (!c) return '<td></td>';
-        return `<td class="${c.type}${nom && c.nom===nom ? ' moi':''}">${court(c.nom)}</td>`; }).join('') + '</tr>';
+        return `<td class="${c.type}${nom && c.nom===nom ? ' moi':''}" data-p="${p+1}" data-nom="${c.nom.replace(/"/g,'')}">${court(c.nom)}</td>`; }).join('') + '</tr>';
     }
     $('grille').innerHTML = t + '</tbody></table>';
     $('pied').textContent = `Mis à jour : ${data.genere.replace('T',' à ')} · même calcul que l'onglet Salles du classeur de couverture.`;
+    window.dispatchEvent(new CustomEvent('forena:rendu', { detail: { r, i, nom, date: data.jours[i].date, plages } }));
   }
+  window.FORENA = { get data() { return data; }, rendre, court };
   selJ.onchange = selN.onchange = rendre;
   $('prec').onclick = () => { if (selJ.selectedIndex > 0) { selJ.selectedIndex--; rendre(); } };
   $('suiv').onclick = () => { if (selJ.selectedIndex < selJ.options.length-1) { selJ.selectedIndex++; rendre(); } };
