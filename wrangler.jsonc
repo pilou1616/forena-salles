@@ -1,0 +1,8 @@
+{
+  "name": "forena-salles",
+  "main": "worker.js",
+  "compatibility_date": "2025-09-01",
+  "assets": { "directory": "./public", "binding": "ASSETS" },
+  // Base des bilans de l'accueil : créée automatiquement au premier déploiement si elle n'existe pas
+  "d1_databases": [{ "binding": "DB", "database_name": "forena-ads" }]
+}
